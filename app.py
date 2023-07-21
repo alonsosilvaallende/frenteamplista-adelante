@@ -124,8 +124,10 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-from gtts import gTTS
 import emoji
+# from gtts import gTTS
+from elevenlabs import voices, generate, save
+voices = voices()
 # Accept user input or example
 if (prompt := st.chat_input("Tu mensaje")) or Politica_Publica or Kast  or Boric or Tierras:
     if Kast:
@@ -147,8 +149,10 @@ if (prompt := st.chat_input("Tu mensaje")) or Politica_Publica or Kast  or Boric
         full_response = my_chain(prompt)
         message_placeholder.markdown(full_response)
         clean_full_response = emoji.replace_emoji(full_response, replace='')
-        tts = gTTS(f"{clean_full_response}", lang='es', tld='co.ve')
-        tts.save("./hola.mp3")
+        audio = generate(f"{clean_full_response}", voice=voices[5], model="eleven_multilingual_v1")
+        save(audio, "./hola.mp3")
+        #tts = gTTS(f"{clean_full_response}", lang='es', tld='co.ve')
+        #tts.save("./hola.mp3")
         audio_file = open('./hola.mp3', 'rb')
         audio_bytes = audio_file.read()
         st.audio(audio_bytes, format='audio/ogg')
